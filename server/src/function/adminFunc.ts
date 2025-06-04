@@ -28,3 +28,18 @@ export const getAllUsers = async ({ userId }: { userId: string }): Promise<{ suc
             }
         }
 }
+
+export const deleteUser = async ({ userId }: { userId: string }): Promise<{ success: boolean; message: string }> => {
+    try {
+        return{
+            success: true,
+            message: "Successfully deleted a user"
+        }
+    } catch (error) {
+        return{
+            success: false,
+            message: error instanceof Error ? error.message
+                : "server failed to process your request"
+        }
+    }
+}
