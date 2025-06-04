@@ -1,9 +1,100 @@
 {
-  "id": "a461fd7d-a9cf-407a-9cfb-c25e58e8a0b5",
+  "id": "a631fc03-e568-4130-9ca1-5d0b6a28bddf",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "public.approvals": {
+      "name": "approvals",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "request_id": {
+          "name": "request_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "approver_id": {
+          "name": "approver_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'pending'"
+        },
+        "comments": {
+          "name": "comments",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "approved_at": {
+          "name": "approved_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "approvals_request_id_requests_id_fk": {
+          "name": "approvals_request_id_requests_id_fk",
+          "tableFrom": "approvals",
+          "tableTo": "requests",
+          "columnsFrom": [
+            "request_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "approvals_approver_id_users_id_fk": {
+          "name": "approvals_approver_id_users_id_fk",
+          "tableFrom": "approvals",
+          "tableTo": "users",
+          "columnsFrom": [
+            "approver_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.items": {
       "name": "items",
       "schema": "",
@@ -21,11 +112,17 @@
           "primaryKey": false,
           "notNull": true
         },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "total": {
           "name": "total",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": 0
         }
       },
@@ -37,8 +134,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.Requests": {
-      "name": "Requests",
+    "public.requests": {
+      "name": "requests",
       "schema": "",
       "columns": {
         "id": {
@@ -48,11 +145,36 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "userId": {
-          "name": "userId",
+        "user_id": {
+          "name": "user_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
+        },
+        "item_id": {
+          "name": "item_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reason": {
+          "name": "reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'pending'"
         },
         "created_at": {
           "name": "created_at",
@@ -61,27 +183,28 @@
           "notNull": false,
           "default": "now()"
         },
-        "reason": {
-          "name": "reason",
-          "type": "text",
+        "completed_at": {
+          "name": "completed_at",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": false
         },
-        "itemsId": {
-          "name": "itemsId",
-          "type": "uuid",
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": true
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "Requests_userId_users_id_fk": {
-          "name": "Requests_userId_users_id_fk",
-          "tableFrom": "Requests",
+        "requests_user_id_users_id_fk": {
+          "name": "requests_user_id_users_id_fk",
+          "tableFrom": "requests",
           "tableTo": "users",
           "columnsFrom": [
-            "userId"
+            "user_id"
           ],
           "columnsTo": [
             "id"
@@ -89,12 +212,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "Requests_itemsId_items_id_fk": {
-          "name": "Requests_itemsId_items_id_fk",
-          "tableFrom": "Requests",
+        "requests_item_id_items_id_fk": {
+          "name": "requests_item_id_items_id_fk",
+          "tableFrom": "requests",
           "tableTo": "items",
           "columnsFrom": [
-            "itemsId"
+            "item_id"
           ],
           "columnsTo": [
             "id"
@@ -109,8 +232,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.stock": {
-      "name": "stock",
+    "public.stock_movement": {
+      "name": "stock_movement",
       "schema": "",
       "columns": {
         "id": {
@@ -120,41 +243,78 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "items": {
-          "name": "items",
+        "item_id": {
+          "name": "item_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "movement_type": {
+          "name": "movement_type",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "total": {
-          "name": "total",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "default": 0
-        },
-        "status": {
-          "name": "status",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'available'"
-        },
-        "userId": {
-          "name": "userId",
+        "request_id": {
+          "name": "request_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": false
+        },
+        "processed_by": {
+          "name": "processed_by",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "stock_userId_users_id_fk": {
-          "name": "stock_userId_users_id_fk",
-          "tableFrom": "stock",
+        "stock_movement_item_id_items_id_fk": {
+          "name": "stock_movement_item_id_items_id_fk",
+          "tableFrom": "stock_movement",
+          "tableTo": "items",
+          "columnsFrom": [
+            "item_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "stock_movement_request_id_requests_id_fk": {
+          "name": "stock_movement_request_id_requests_id_fk",
+          "tableFrom": "stock_movement",
+          "tableTo": "requests",
+          "columnsFrom": [
+            "request_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "stock_movement_processed_by_users_id_fk": {
+          "name": "stock_movement_processed_by_users_id_fk",
+          "tableFrom": "stock_movement",
           "tableTo": "users",
           "columnsFrom": [
-            "userId"
+            "processed_by"
           ],
           "columnsTo": [
             "id"
@@ -192,6 +352,12 @@
           "primaryKey": false,
           "notNull": false,
           "default": "'engineer'"
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},

@@ -18,6 +18,14 @@ export const loginPlugin = new Elysia()
         try {
             // select id from users and verify password then assign token
             const userIdArr = await mainDb.select({ id: users.id, password: users.password, name: users.name }).from(users).where(eq(users.name, body.username));
+
+            if (userIdArr.length === 0) {
+                return {
+                    success: false,
+                    message: "User not found!"
+                }
+            }
+
             const userId = userIdArr[0].id;
     
             // verify password
